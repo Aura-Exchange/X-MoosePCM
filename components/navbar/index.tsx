@@ -120,20 +120,8 @@ const Navbar = () => {
               )}
             </Box>
           </Link>
-          <Box css={{ flex: 1, px: '$5', maxWidth: 460 }}>
-            <GlobalSearch
-              ref={searchRef}
-              placeholder="Search collection name"
-              containerCss={{ width: '100%' }}
-              key={router.asPath}
-            />
-          </Box>
-          <Flex align="center" css={{ gap: '$5', mr: '$5' }}>
-            <Link href="/collection-rankings">
-              <NavItem active={router.pathname == '/collection-rankings'}>
-                Collection
-              </NavItem>
-            </Link>
+
+          <Flex align='end' justify='end' css={{flex:1, gap: '$5', mr: '$5', justifyContent:'end' }}>
             <Link href="/portfolio">
               <NavItem active={router.pathname == '/portfolio'}>Sell</NavItem>
             </Link>
@@ -145,6 +133,7 @@ const Navbar = () => {
             </Link> */}
           </Flex>
         </Flex>
+
       </Box>
 
       <Flex css={{ gap: '$3' }} justify="end" align="center">
