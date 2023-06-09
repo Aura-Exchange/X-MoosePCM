@@ -122,6 +122,9 @@ const Navbar = () => {
           </Link>
 
           <Flex align='end' justify='end' css={{flex:1, gap: '$5', mr: '$5', justifyContent:'end' }}>
+          <Link href="/">
+              <NavItem active={router.pathname == '/'}>Home</NavItem>
+            </Link>
             <Link href="/portfolio">
               <NavItem active={router.pathname == '/portfolio'}>Sell</NavItem>
             </Link>
