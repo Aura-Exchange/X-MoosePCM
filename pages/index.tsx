@@ -72,87 +72,14 @@ const IndexPage: NextPage<Props> = ({ ssr }) => {
 
   useEffect(() => {
     if(!isValidating){
+      console.log("LENGTH: "+collections.length)
       push(`/collection/${chain.name}/${collections[0].id}`);
+      
     }
  }, [isValidating]);
 
 
   return (
-    // <Layout>
-    //   <Head />
-    //   <Box
-    //     css={{
-    //       p: 24,
-    //       height: '100%',
-    //       '@bp800': {
-    //         p: '$6',
-    //       },
-    //     }}
-    //   >
-    //     {isDisconnected && (
-    //       <Flex
-    //         direction="column"
-    //         align="center"
-    //         css={{ mx: 'auto', maxWidth: 728, pt: '$5', textAlign: 'center' }}
-    //       >
-  
-    //       </Flex>
-    //     )}
-    //     <Flex
-    //       css={{
-    //         height: '100%',
-    //         textAlign: 'center',
-    //         display: 'grid',
-    //         gridTemplateColumns: '1fr 1fr',
-    //         gridGap: '$3',
-    //         alignItems: 'center',
-    //         '@media screen and (max-width: 768px)': { // hide on screens smaller than 768px
-    //           display: 'none',
-    //         },
-    //       }}
-    //     >
-          
-         
-    //     </Flex>
-    //     <Flex css={{ my: '$6', gap: 75 }} direction="column">
-    //       <Flex
-    //         justify="between"
-    //         align="start"
-    //         css={{
-    //           flexDirection: 'column',
-    //           gap: 24,
-    //           '@bp800': {
-    //             alignItems: 'center',
-    //             flexDirection: 'row',
-    //           },
-    //         }}
-    //       >
-    //       </Flex>
-    //       {isSSR || !isMounted ? null : (
-    //         <CollectionRankingsTable
-    //           collections={collections}
-    //           loading={isValidating}
-    //           volumeKey={volumeKey}
-    //         />
-    //       )}
-    //     </Flex>
-    //     <Flex
-    //       css={{
-    //         height: '100%',
-    //         textAlign: 'center',
-    //         display: 'grid',
-    //         gridTemplateColumns: '1fr 1fr',
-    //         gridGap: '$3',
-    //         alignItems: 'center',
-    //         '@media screen and (max-width: 768px)': { // hide on screens smaller than 768px
-    //           display: 'none',
-    //         },
-    //       }}
-    //     >
-    //     </Flex>
-    //     <Footer />
-    //   </Box>
-    // </Layout>
     <><p></p></>
   )
 }

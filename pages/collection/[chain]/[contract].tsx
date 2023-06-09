@@ -4,12 +4,14 @@ import {
   InferGetStaticPropsType,
   NextPage,
 } from 'next'
-import { Text, Flex, Box, Button } from '../../../components/primitives'
+import { Text, Flex, Box, Button, Input } from '../../../components/primitives'
 import {
   useCollections,
   useCollectionActivity,
   useDynamicTokens,
   useAttributes,
+  useTokens,
+  DynamicTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import { paths } from '@reservoir0x/reservoir-sdk'
 import Layout from 'components/Layout'
@@ -53,6 +55,11 @@ import titleCase from 'utils/titleCase'
 import Link from 'next/link'
 import Img from 'components/primitives/Img'
 import Sweep from 'components/buttons/Sweep'
+import { Dropdown } from 'components/primitives/Dropdown'
+import { CollectionsTable } from 'components/portfolio/CollectionsTable'
+import GlobalSearch from 'components/navbar/GlobalSearch'
+import { CollectionDropdown } from 'components/CollectionDropdown'
+import { AttributeSelector } from 'components/collections/filters/AttributeSelector'
 
 type ActivityTypes = Exclude<
   NonNullable<
@@ -80,6 +87,9 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
   >()
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const loadMoreObserver = useIntersectionObserver(loadMoreRef, {})
+
+  const loadMoreRefSingleToken = useRef<HTMLDivElement>(null)
+  const loadMoreObserverSingleToken = useIntersectionObserver(loadMoreRefSingleToken, {})
 
   const scrollRef = useRef<HTMLDivElement | null>(null)
 
@@ -139,6 +149,26 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
     fallbackData: initialTokenFallbackData ? [ssr.tokens] : undefined,
   })
 
+  const [tokensToShow, setTokensToShow] = useState<DynamicTokens>(tokens);
+  const [showSearchToken, setShowToken] = useState(false);
+  const [searchNotFound, setSearchNotFound] = useState(false);
+  const [tokenNumber, setTokenNumber] = useState('')
+
+
+  //Seach Token hook
+  const {
+    data: singleTokens,
+    mutate: mutateSingleTokens,
+    fetchNextPage: fetchNextPageSingleToken,
+    setSize: setSizeSingleToken,
+    resetCache: resetCacheSingleToken,
+    isFetchingInitialData: isFetchingInitialDataSingleToken,
+    isFetchingPage: isFetchingPageSingleToken,
+    hasNextPage: hasNextPageSingleToken,
+  } = useTokens(
+    { tokens: [`${collection?.id}:${tokenNumber}`] }, { fallbackData: initialTokenFallbackData ? [ssr.tokens] : undefined }
+  )
+
   const attributesData = useAttributes(id)
 
   const attributes = useMemo(() => {
@@ -163,9 +193,9 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
 
   const rarityEnabledCollection = Boolean(
     collection?.tokenCount &&
-      +collection.tokenCount >= 2 &&
-      attributes &&
-      attributes?.length >= 2
+    +collection.tokenCount >= 2 &&
+    attributes &&
+    attributes?.length >= 2
   )
 
   //@ts-ignore: Ignore until we regenerate the types
@@ -179,10 +209,41 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
   }, [loadMoreObserver?.isIntersecting])
 
   useEffect(() => {
+    const isVisible = !!loadMoreObserverSingleToken?.isIntersecting
+    if (isVisible) {
+      fetchNextPageSingleToken()
+    }
+  }, [loadMoreObserverSingleToken?.isIntersecting])
+
+  useEffect(() => {
     if (isMounted && initialTokenFallbackData) {
       setInitialTokenFallbackData(false)
     }
   }, [router.query])
+
+
+
+  useEffect(() => {
+
+    if (singleTokens.length != 0) {
+      if (singleTokens.length > 0) {
+        setSearchNotFound(false)
+        setShowToken(true);
+        setTokensToShow(singleTokens);
+      }
+    }
+    else if (singleTokens.length == 0 && tokenNumber.length > 0) {
+      setSearchNotFound(true)
+      if (tokenNumber.length > 1) {
+        setShowToken(true);
+        setTokensToShow(singleTokens)
+      }
+    }
+    else {
+      setShowToken(false)
+      setSearchNotFound(false)
+    }
+  }, [singleTokens]);
 
   return (
     <Layout>
@@ -204,7 +265,7 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
             },
           }}
         >
-          <Flex justify="between" css={{ mb: '$4' }}>
+          <Flex justify='between' css={{ mb: '$4' }}>
             <Flex direction="column" css={{ gap: '$4', minWidth: 0 }}>
               <Flex css={{ gap: '$4', flex: 1 }} align="center">
                 <Img
@@ -230,64 +291,20 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                       }
                     />
                   </Flex>
-
-                  {!smallSubtitle && (
-                    <Flex align="end" css={{ gap: 24 }}>
-                      <CopyText
-                        text={collection.id as string}
-                        css={{ width: 'max-content' }}
-                      >
-                        <Flex css={{ gap: '$2', width: 'max-content' }}>
-                          {!isSmallDevice && (
-                            <Text style="body1" color="subtle">
-                              Collection
-                            </Text>
-                          )}
-                          <Text
-                            style="body1"
-                            color={isSmallDevice ? 'subtle' : undefined}
-                            as="p"
-                          >
-                            {truncateAddress(collection.id as string)}
-                          </Text>
-                          <Box css={{ color: '$gray10' }}>
-                            <FontAwesomeIcon
-                              icon={faCopy}
-                              width={16}
-                              height={16}
-                            />
-                          </Box>
-                        </Flex>
-                      </CopyText>
-                      <Box>
-                        <Text style="body1" color="subtle">
-                          Token Standard{' '}
-                        </Text>
-                        <Text style="body1">{contractKind}</Text>
-                      </Box>
-                      <Box>
-                        <Text style="body1" color="subtle">
-                          Chain{' '}
-                        </Text>
-                        <Link
-                          href={`/collection-rankings?chain=${router.query.chain}`}
-                        >
-                          <Text style="body1">{chain}</Text>
-                        </Link>
-                      </Box>
-                      <Box>
-                        <Text style="body1" color="subtle">
-                          Creator Earnings
-                        </Text>
-                        <Text style="body1"> {creatorRoyalties}%</Text>
-                      </Box>
-                    </Flex>
-                  )}
                 </Box>
               </Flex>
+              {/* Collection Dropdown goes here  */}
+              <Flex>
+                <CollectionDropdown />
+
+              </Flex>
             </Flex>
+            <Box>
+              <StatHeader collection={collection} />
+            </Box>
             <CollectionActions collection={collection} />
           </Flex>
+
           {smallSubtitle && (
             <Grid
               css={{
@@ -315,32 +332,15 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                   </Flex>
                 </Flex>
               </CopyText>
-              <Flex direction="column">
-                <Text style="body1" color="subtle">
-                  Token Standard{' '}
-                </Text>
-                <Text style="body1">{contractKind}</Text>
-              </Flex>
-              <Flex direction="column">
-                <Text style="body1" color="subtle">
-                  Chain{' '}
-                </Text>
-                <Text style="body1">{chain}</Text>
-              </Flex>
-              <Flex direction="column">
-                <Text style="body1" color="subtle">
-                  Creator Earnings
-                </Text>
-                <Text style="body1"> {creatorRoyalties}%</Text>
-              </Flex>
             </Grid>
           )}
-          <StatHeader collection={collection} />
+
           <Tabs.Root
             defaultValue="items"
             onValueChange={(value) => {
               if (value === 'items') {
                 resetCache()
+                resetCacheSingleToken()
                 setSize(1)
                 mutate()
               }
@@ -371,6 +371,7 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                     setOpen={setAttributeFiltersOpen}
                     scrollToTop={scrollToTop}
                   />
+
                 )}
                 <Box
                   css={{
@@ -396,6 +397,28 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                         },
                       }}
                     >
+                      {/* Search Tokens Here */}
+                      <Flex justify='center' align={'center'}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size="xl" />
+
+                        <Input
+                          placeholder='Search Collection'
+                          css={{
+                            '@max-bp400': {
+                              fontSize: 'small',
+                              width: '50%'
+                            }
+                          }}
+                          value={tokenNumber}
+                          onChange={(e) => {
+                            setTokenNumber(e.target.value)
+                            if (e.target.value.length == 0) {
+                              setTokenNumber('')
+                            }
+                          }}
+                        />
+                      </Flex>
+
                       <SortTokens
                         css={{
                           order: 3,
@@ -454,49 +477,82 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                       },
                     }}
                   >
-                    {isFetchingInitialData
+                    {(!showSearchToken) && (isFetchingInitialData
                       ? Array(10)
-                          .fill(null)
-                          .map((_, index) => (
-                            <LoadingCard key={`loading-card-${index}`} />
-                          ))
-                      : tokens.map((token, i) => (
-                          <TokenCard
-                            key={i}
-                            token={token}
-                            orderQuantity={
-                              token?.market?.floorAsk?.quantityRemaining
+                        .fill(null)
+                        .map((_, index) => (
+                          <LoadingCard key={`loading-card-${index}`} />
+                        ))
+                      : tokens?.map((token, i) => (
+                        <TokenCard
+                          key={i}
+                          token={token}
+                          orderQuantity={
+                            token?.market?.floorAsk?.quantityRemaining
+                          }
+                          address={address as Address}
+                          mutate={mutate}
+                          rarityEnabled={rarityEnabledCollection}
+                          onMediaPlayed={(e) => {
+                            if (
+                              playingElement &&
+                              playingElement !== e.nativeEvent.target
+                            ) {
+                              playingElement.pause()
                             }
-                            address={address as Address}
-                            mutate={mutate}
-                            rarityEnabled={rarityEnabledCollection}
-                            onMediaPlayed={(e) => {
-                              if (
-                                playingElement &&
-                                playingElement !== e.nativeEvent.target
-                              ) {
-                                playingElement.pause()
-                              }
-                              const element =
-                                (e.nativeEvent.target as HTMLAudioElement) ||
-                                (e.nativeEvent.target as HTMLVideoElement)
-                              if (element) {
-                                setPlayingElement(element)
-                              }
-                            }}
-                          />
-                        ))}
+                            const element =
+                              (e.nativeEvent.target as HTMLAudioElement) ||
+                              (e.nativeEvent.target as HTMLVideoElement)
+                            if (element) {
+                              setPlayingElement(element)
+                            }
+                          }}
+                        />
+                      )))}
+                    {(showSearchToken) && (isFetchingInitialDataSingleToken
+                      ? Array(10)
+                        .fill(null)
+                        .map((_, index) => (
+                          <LoadingCard key={`loading-card-${index}`} />
+                        ))
+                      : tokensToShow?.map((token, i) => (
+                        <TokenCard
+                          key={i}
+                          token={token}
+                          orderQuantity={
+                            token?.market?.floorAsk?.quantityRemaining
+                          }
+                          address={address as Address}
+                          mutate={mutate}
+                          rarityEnabled={rarityEnabledCollection}
+                          onMediaPlayed={(e) => {
+                            if (
+                              playingElement &&
+                              playingElement !== e.nativeEvent.target
+                            ) {
+                              playingElement.pause()
+                            }
+                            const element =
+                              (e.nativeEvent.target as HTMLAudioElement) ||
+                              (e.nativeEvent.target as HTMLVideoElement)
+                            if (element) {
+                              setPlayingElement(element)
+                            }
+                          }}
+                        />
+                      )))}
+
                     <Box
                       ref={loadMoreRef}
                       css={{
-                        display: isFetchingPage ? 'none' : 'block',
+                        display: (isFetchingPage && !showSearchToken) ? 'none' : 'block',
                       }}
                     >
-                      {(hasNextPage || isFetchingPage) &&
+                      {(hasNextPage || isFetchingPage) && (!showSearchToken) &&
                         !isFetchingInitialData && <LoadingCard />}
                     </Box>
                     {(hasNextPage || isFetchingPage) &&
-                      !isFetchingInitialData && (
+                      !isFetchingInitialData && (!showSearchToken) && (
                         <>
                           {Array(6)
                             .fill(null)
@@ -505,8 +561,42 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                             ))}
                         </>
                       )}
+
+                    <Box
+                      ref={loadMoreRefSingleToken}
+                      css={{
+                        display: (isFetchingPageSingleToken) ? 'none' : 'block',
+                      }}
+                    >
+                      {(hasNextPageSingleToken || isFetchingPageSingleToken) &&
+                        !isFetchingInitialDataSingleToken && <LoadingCard />}
+                    </Box>
+                    {(hasNextPageSingleToken || isFetchingPageSingleToken) &&
+                      !isFetchingInitialDataSingleToken && (showSearchToken) && (
+                        <>
+                          {Array(6)
+                            .fill(null)
+                            .map((_, index) => (
+                              <LoadingCard key={`loading-card-${index}`} />
+                            ))}
+                        </>
+                      )}
+
                   </Grid>
-                  {tokens.length == 0 && !isFetchingPage && (
+                  {(((tokens?.length == 0 && !isFetchingPage)) && (
+                    <Flex
+                      direction="column"
+                      align="center"
+                      css={{ py: '$6', gap: '$4' }}
+                    >
+                      <Text css={{ color: '$gray11' }}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size="2xl" />
+                      </Text>
+                      <Text css={{ color: '$gray11' }}>No items found</Text>
+                    </Flex>
+                  ))}
+
+                  {((tokensToShow?.length == 0 && !isFetchingPageSingleToken) || (searchNotFound)) && (
                     <Flex
                       direction="column"
                       align="center"
@@ -596,11 +686,11 @@ export const getStaticProps: GetStaticProps<{
   }
 
   let collectionQuery: paths['/collections/v5']['get']['parameters']['query'] =
-    {
-      id,
-      includeTopBid: true,
-      normalizeRoyalties: NORMALIZE_ROYALTIES,
-    }
+  {
+    id,
+    includeTopBid: true,
+    normalizeRoyalties: NORMALIZE_ROYALTIES,
+  }
 
   const collectionsPromise = fetcher(
     `${reservoirBaseUrl}/collections/v5`,
@@ -629,7 +719,7 @@ export const getStaticProps: GetStaticProps<{
   const promises = await Promise.allSettled([
     collectionsPromise,
     tokensPromise,
-  ]).catch(() => {})
+  ]).catch(() => { })
   const collection: Props['ssr']['collection'] =
     promises?.[0].status === 'fulfilled' && promises[0].value.data
       ? (promises[0].value.data as Props['ssr']['collection'])
@@ -657,6 +747,19 @@ export const getStaticProps: GetStaticProps<{
       },
     }
   }
+  // else if (
+  //   collection &&
+  //   collection.collections?.[0].contractKind === 'erc1155' &&
+  //   Number(collection?.collections?.[0].tokenCount) === 1 &&
+  //   showTokens?.tokens?.[0].token?.tokenId !== undefined
+  // ) {
+  //   return {
+  //     redirect: {
+  //       destination: `/collection/${routePrefix}/${id}/${tokens.tokens[0].token.tokenId}`,
+  //       permanent: false,
+  //     },
+  //   }
+  // }
 
   return {
     props: { ssr: { collection, tokens, hasAttributes }, id },

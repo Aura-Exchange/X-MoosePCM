@@ -2,6 +2,8 @@ import FormatCrypto from './FormatCrypto'
 import React, { FC, ComponentProps } from 'react'
 import { constants } from 'ethers'
 import CryptoCurrencyIcon from './CryptoCurrencyIcon'
+import Box from './Box'
+import Flex from './Flex'
 
 type FormatCryptoCurrencyProps = {
   logoHeight?: number
@@ -20,6 +22,8 @@ const FormatCryptoCurrency: FC<Props> = ({
   decimals,
 }) => {
   return (
+    <Flex>
+
     <FormatCrypto
       css={css}
       textStyle={textStyle}
@@ -27,8 +31,10 @@ const FormatCryptoCurrency: FC<Props> = ({
       maximumFractionDigits={maximumFractionDigits}
       decimals={decimals}
     >
-      <CryptoCurrencyIcon css={{ height: logoHeight }} address={address} />
+      <CryptoCurrencyIcon css={{ height: logoHeight}} address={address} />
     </FormatCrypto>
+    </Flex>
+    
   )
 }
 

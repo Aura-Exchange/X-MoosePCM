@@ -11,12 +11,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 const DropdownMenuContent = styled(DropdownMenuPrimitive.DropdownMenuContent, {
   mx: '$4',
-  p: '$2',
   borderRadius: 8,
-  zIndex: 5,
-  background: '$dropdownBg',
-  $$borderColor: '$colors$gray7',
-  boxShadow: '0 0 0 1px $$borderColor',
+  zIndex: 1,
 })
 
 const AnimatedDropdownMenuContent = forwardRef<
@@ -53,13 +49,6 @@ const DropdownMenuItem = styled(DropdownMenuPrimitive.DropdownMenuItem, {
   py: '$4',
   borderRadius: 8,
   outline: 'none',
-  cursor: 'pointer',
-  '&:hover': {
-    backgroundColor: '$gray5',
-  },
-  '&:focus': {
-    backgroundColor: '$gray5',
-  },
 })
 
 type Props = {

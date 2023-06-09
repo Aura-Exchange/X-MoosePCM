@@ -54,7 +54,7 @@ export default async function handler(req: Request) {
     }
 
     promises.push(
-      fetcher(`${reservoirBaseUrl}/search/collections/v1`, query, headers)
+      fetcher(`${reservoirBaseUrl}/collections/v2?collectionsSetId=${process.env.NEXT_PUBLIC_ETH_COLLECTION_SET_ID}`, query, headers)
     )
   })
 
@@ -69,7 +69,7 @@ export default async function handler(req: Request) {
         },
       }
       const { data } = await fetcher(
-        `${reservoirBaseUrl}/collections/v5?contract=${query}&limit=6`,
+        `${reservoirBaseUrl}/collections/v2?collectionsSetId=${process.env.NEXT_PUBLIC_ETH_COLLECTION_SET_ID}`,
         {},
         headers
       )
@@ -190,7 +190,7 @@ export default async function handler(req: Request) {
         },
       }
       const { data } = await fetcher(
-        `${reservoirBaseUrl}/collections/v5?name=${query}&limit=6`,
+        `${reservoirBaseUrl}/collections/v5?collectionsSetId=${process.env.NEXT_PUBLIC_ETH_COLLECTION_SET_ID}`,
         {},
         headers
       )
@@ -228,19 +228,6 @@ export default async function handler(req: Request) {
 
     if (results.length > 0) {
       searchResults = results
-    } else {
-      let ensData = await fetch(
-        `https://api.ensideas.com/ens/resolve/${query}`
-      ).then((res) => res.json())
-      searchResults = [
-        {
-          type: 'wallet',
-          data: {
-            ...ensData,
-            address: query,
-          },
-        },
-      ]
     }
   }
 
