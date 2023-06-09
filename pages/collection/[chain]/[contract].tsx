@@ -294,16 +294,26 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                 </Box>
               </Flex>
               {/* Collection Dropdown goes here  */}
-              <Flex>
-                <CollectionDropdown />
-
-              </Flex>
+              {!isSmallDevice &&
+                <Flex align={'center'} justify={'start'}>
+                  <CollectionDropdown />
+                </Flex>}
             </Flex>
-            <Box>
-              <StatHeader collection={collection} />
-            </Box>
+            {!isSmallDevice &&
+              <Flex justify={'center'} >
+                <Box>
+                  <StatHeader collection={collection} />
+                </Box>
+              </Flex>
+            }
             <CollectionActions collection={collection} />
           </Flex>
+
+          {isSmallDevice &&
+            <Flex justify={'start'} css={{paddingBottom:'$2'}}>
+              <CollectionDropdown />
+            </Flex>
+          }
 
           {smallSubtitle && (
             <Grid
@@ -314,27 +324,54 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                 maxWidth: 550,
               }}
             >
+              
               <CopyText
                 text={collection.id as string}
                 css={{ width: 'max-content' }}
               >
-                <Flex css={{ width: 'max-content' }} direction="column">
-                  <Text style="body1" color="subtle">
-                    Collection
-                  </Text>
-                  <Flex css={{ gap: '$2' }}>
-                    <Text style="body1" as="p">
-                      {truncateAddress(collection.id as string)}
+                {!isSmallDevice &&
+                  <Flex css={{ width: 'max-content'}} direction="column">
+                    <Text style="body1" color="subtle">
+                      Collection:
                     </Text>
-                    <Box css={{ color: '$gray10' }}>
-                      <FontAwesomeIcon icon={faCopy} width={16} height={16} />
-                    </Box>
-                  </Flex>
-                </Flex>
+                    <Flex css={{ gap: '$2' }}>
+                      <Text style="body1" as="p">
+                        {truncateAddress(collection.id as string)}
+                      </Text>
+                      <Box css={{ color: '$gray10' }}>
+                        <FontAwesomeIcon icon={faCopy} width={16} height={16} />
+                      </Box>
+                    </Flex>
+                  </Flex>}
+
+                {isSmallDevice &&
+                  <Flex css={{ width: 'max-content' }} direction="row">
+                    <Text style="body1" color="subtle" css={{ paddingRight: '$2' }}>
+                      Collection:
+                    </Text>
+                    <Flex css={{ gap: '$2' }}>
+                      <Text style="body1" as="p">
+                        {truncateAddress(collection.id as string)}
+                      </Text>
+                      <Box css={{ color: '$gray10' }}>
+                        <FontAwesomeIcon icon={faCopy} width={16} height={16} />
+                      </Box>
+                    </Flex>
+                  </Flex>}
               </CopyText>
+
             </Grid>
           )}
 
+          
+
+          {isSmallDevice &&
+            <Flex justify={'center'} css={{ paddingTop: '$4' }}>
+              <Box>
+                <StatHeader collection={collection} />
+              </Box>
+            </Flex>
+          }
           <Tabs.Root
             defaultValue="items"
             onValueChange={(value) => {
@@ -397,27 +434,23 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                         },
                       }}
                     >
-                      {/* Search Tokens Here */}
-                      <Flex justify='center' align={'center'}>
-                        <FontAwesomeIcon icon={faMagnifyingGlass} size="xl" />
+                      {/* Search Tokens Here <Desktop Verison>  */}
+                      {!isSmallDevice &&
+                        <Flex justify='center' align={'center'}>
+                          <FontAwesomeIcon icon={faMagnifyingGlass} size="xl" />
 
-                        <Input
-                          placeholder='Search Collection'
-                          css={{
-                            '@max-bp400': {
-                              fontSize: 'small',
-                              width: '50%'
-                            }
-                          }}
-                          value={tokenNumber}
-                          onChange={(e) => {
-                            setTokenNumber(e.target.value)
-                            if (e.target.value.length == 0) {
-                              setTokenNumber('')
-                            }
-                          }}
-                        />
-                      </Flex>
+                          <Input
+                            placeholder='Search Token ID'
+                            value={tokenNumber}
+                            onChange={(e) => {
+                              setTokenNumber(e.target.value)
+                              if (e.target.value.length == 0) {
+                                setTokenNumber('')
+                              }
+                            }}
+                          />
+                        </Flex>
+                      }
 
                       <SortTokens
                         css={{
@@ -464,6 +497,24 @@ const CollectionPage: NextPage<Props> = ({ id, ssr }) => {
                       />
                     </Flex>
                   </Flex>
+                  {/* Search Tokens Here <Mobile Verison>  */}
+
+                  {isSmallDevice &&
+                    <Flex justify='center' align={'center'} css={{ paddingBottom: '$4' }}>
+                      <FontAwesomeIcon icon={faMagnifyingGlass} size="xl" />
+
+                      <Input
+                        placeholder='Search Token ID'
+                        value={tokenNumber}
+                        onChange={(e) => {
+                          setTokenNumber(e.target.value)
+                          if (e.target.value.length == 0) {
+                            setTokenNumber('')
+                          }
+                        }}
+                      />
+                    </Flex>
+                  }
                   {!isSmallDevice && <SelectedAttributes />}
                   <Grid
                     css={{

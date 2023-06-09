@@ -13,6 +13,7 @@ const DropdownMenuContent = styled(DropdownMenuPrimitive.DropdownMenuContent, {
   mx: '$4',
   borderRadius: 8,
   zIndex: 1,
+  background:'$dropdownBg',
 })
 
 const AnimatedDropdownMenuContent = forwardRef<
@@ -22,7 +23,7 @@ const AnimatedDropdownMenuContent = forwardRef<
   <DropdownMenuContent asChild forceMount {...props}>
     <motion.div
       ref={forwardedRef}
-      initial={{ scale: 0.9, opacity: 0, y: -20 }}
+      initial={{ scale: 0.9, opacity: 1, y: -20 }}
       animate={{
         scale: 1,
         opacity: 1,
@@ -48,7 +49,7 @@ const DropdownMenuItem = styled(DropdownMenuPrimitive.DropdownMenuItem, {
   px: '$2',
   py: '$4',
   borderRadius: 8,
-  outline: 'none',
+  outline: '',
 })
 
 type Props = {

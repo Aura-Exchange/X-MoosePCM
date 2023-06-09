@@ -63,7 +63,7 @@ const StatHeader: FC<StatHeaderProps> = ({ collection }) => {
         borderRadius: 8,
         overflow: 'hidden',
         gap: 1,
-        '@sm': {
+        '@bp300': {
           gridTemplateColumns: '1fr 1fr ',
           marginRight: 'auto',
         },
