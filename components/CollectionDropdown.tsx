@@ -32,7 +32,7 @@ export const CollectionDropdown: FC = () => {
     <Button
       css={{
         justifyContent: 'center',
-        '@media (max-width: 600px)': { // Adjust the breakpoint as needed
+        '@max-width: 600px': { // Adjust the breakpoint as needed
             // Mobile-specific styles here
             // Example: change background color for mobile
             size:'xs'
