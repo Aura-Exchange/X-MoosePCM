@@ -152,6 +152,7 @@ export default ({
       <Link
         passHref
         href={`/collection/${routePrefix}/${token?.token?.contract}/${token?.token?.tokenId}`}
+        target='_blank'
       >
         <Box css={{ background: '$gray3', overflow: 'hidden' }}>
           <TokenMedia
@@ -187,6 +188,7 @@ export default ({
       </Link>
       <Link
         href={`/collection/${routePrefix}/${token?.token?.contract}/${token?.token?.tokenId}`}
+        target='_blank'
       >
         <Flex
           css={{ p: '$4', minHeight: 132, cursor: 'pointer' }}

@@ -1,9 +1,5 @@
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
-import { Text, Flex, Box, Button } from 'components/primitives'
-import Layout from 'components/Layout'
-import Image from 'next/image'
-import { ComponentPropsWithoutRef, useContext, useState } from 'react'
-import { Footer } from 'components/home/Footer'
+import { ComponentPropsWithoutRef, useContext, useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useMarketplaceChain, useMounted } from 'hooks'
 import { useAccount } from 'wagmi'
@@ -12,14 +8,12 @@ import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 import fetcher from 'utils/fetcher'
 import { NORMALIZE_ROYALTIES } from './_app'
 import supportedChains from 'utils/chains'
-import Link from 'next/link'
-import ChainToggle from 'components/common/ChainToggle'
-import CollectionsTimeDropdown, {
+import  {
   CollectionsSortingOption,
 } from 'components/common/CollectionsTimeDropdown'
-import { Head } from 'components/Head'
 import { CollectionRankingsTable } from 'components/rankings/CollectionRankingsTable'
 import { ChainContext } from 'context/ChainContextProvider'
+import { useRouter } from 'next/router'
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -30,7 +24,8 @@ const IndexPage: NextPage<Props> = ({ ssr }) => {
   const [sortByTime, setSortByTime] =
     useState<CollectionsSortingOption>('1DayVolume')
   const marketplaceChain = useMarketplaceChain()
-  const { isDisconnected } = useAccount()
+  //const { isDisconnected } = useAccount()
+  const {push} = useRouter()
 
   let collectionQuery: Parameters<typeof useCollections>['0'] = {
     limit: 10,
@@ -68,154 +63,16 @@ const IndexPage: NextPage<Props> = ({ ssr }) => {
       break
   }
 
+  useEffect(() => {
+    if(!isValidating){
+      push(`/collection/${chain.name}/${collections[0].id}`);
+      
+    }
+ }, [isValidating]);
+
+
   return (
-    <Layout>
-      <Head />
-      <Box
-        css={{
-          p: 24,
-          height: '100%',
-          '@bp800': {
-            p: '$6',
-          },
-        }}
-      >
-        {isDisconnected && (
-          <Flex
-            direction="column"
-            align="center"
-            css={{ mx: 'auto', maxWidth: 728, pt: '$5', textAlign: 'center' }}
-          >
-            <Text style="h3" css={{ mb: 24 }}>
-              Aura Exchange
-            </Text>
-            <Text style="body1" css={{ mb: 48 }}>
-              Aura Exchange Marketplace is the NFT Marketplace
-              that adds utility to your project.
-            </Text>
-          </Flex>
-        )}
-        <Flex
-          css={{
-            height: '100%',
-            textAlign: 'center',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gridGap: '$3',
-            alignItems: 'center',
-            '@media screen and (max-width: 768px)': { // hide on screens smaller than 768px
-              display: 'none',
-            },
-          }}
-        >
-          <Text style="h1" as="h1">
-            Aura HUB
-            <br />
-            <Text style="body1" css={{ mb: 48 }}>
-              List on multiple marketplaces at once
-              Completely gas free!
-              <br />
-              List on all major marketplaces at once, with zero listing fees.
-              <br />
-              We aggregate over 160 NFT marketplaces to give you the best
-              possible exsposure to sell your digital assets.
-            </Text>
-          </Text>
-          <Link href="/portfolio">
-            <Box css={{ width: 750, cursor: 'pointer' }}>
-              <Image
-                src="/listings.png"
-                width={750}
-                height={571}
-                alt="Listing"
-              />
-            </Box>
-          </Link>
-        </Flex>
-        <Flex css={{ my: '$6', gap: 75 }} direction="column">
-          <Flex
-            justify="between"
-            align="start"
-            css={{
-              flexDirection: 'column',
-              gap: 24,
-              '@bp800': {
-                alignItems: 'center',
-                flexDirection: 'row',
-              },
-            }}
-          >
-            {/* <Text style="h4" as="h4">
-              Popular Collections
-            </Text> */}
-            {/* <Flex align="center" css={{ gap: '$4' }}>
-              <CollectionsTimeDropdown
-                compact={compactToggleNames && isMounted}
-                option={sortByTime}
-                onOptionSelected={(option) => {
-                  setSortByTime(option)
-                }}
-              />
-            </Flex> */}
-          </Flex>
-          {/* <ChainToggle /> */}
-          {isSSR || !isMounted ? null : (
-            <CollectionRankingsTable
-              collections={collections}
-              loading={isValidating}
-              volumeKey={volumeKey}
-            />
-          )}
-          {/* <Box css={{ alignSelf: 'center' }}>
-            <Link href="/collection-rankings">
-              <Button
-                css={{
-                  minWidth: 224,
-                  justifyContent: 'center',
-                }}
-                size="large"
-              >
-                View All
-              </Button>
-            </Link>
-          </Box> */}
-        </Flex>
-        <Flex
-          css={{
-            height: '100%',
-            textAlign: 'center',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gridGap: '$3',
-            alignItems: 'center',
-            '@media screen and (max-width: 768px)': { // hide on screens smaller than 768px
-              display: 'none',
-            },
-          }}
-        >
-
-          <Box css={{ width: 750, cursor: 'pointer' }}>
-            <Image
-              src="/revshare.png"
-              width={750}
-              height={571}
-              alt="Listing"
-            />
-
-          </Box>
-          <Text style="h1" as="h1">
-            Aura Exchange Membership
-            <br />
-            <Text style="body1" css={{ mb: 48 }}>
-              Aura shares 70% of all trading profit revenue with our community
-              <br />
-              Mint Aura Member NFTs for just $1 each to share in exchange profits
-            </Text>
-          </Text>
-        </Flex>
-        <Footer />
-      </Box>
-    </Layout>
+    <><p></p></>
   )
 }
 

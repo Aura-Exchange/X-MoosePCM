@@ -13,9 +13,11 @@ import {
     faChartLine,
     faClose,
     faCopy,
+    faCreditCard,
     faHand,
     faList,
     faRightFromBracket,
+    faShieldHalved,
     faStore,
 } from '@fortawesome/free-solid-svg-icons'
 import CopyText from 'components/common/CopyText'
@@ -222,6 +224,34 @@ export const AccountSidebar: FC = () => {
                                             >
                                                 <FontAwesomeIcon icon={faChartLine} />
                                                 <Text style="body1">Activity</Text>
+                                            </Flex>
+                                        </Link>
+                                        <Link href="/portfolio?tab=buy">
+                                            <Flex
+                                                align="center"
+                                                css={{
+                                                    gap: 6,
+                                                    p: '$3',
+                                                    color: '$gray10',
+                                                    cursor: 'pointer',
+                                                }}
+                                            >
+                                                <FontAwesomeIcon icon={faCreditCard} />
+                                                <Text style="body1">Buy Crypto</Text>
+                                            </Flex>
+                                        </Link>
+                                        <Link href="/portfolio?tab=revoke">
+                                            <Flex
+                                                align="center"
+                                                css={{
+                                                    gap: 6,
+                                                    p: '$3',
+                                                    color: '$gray10',
+                                                    cursor: 'pointer',
+                                                }}
+                                            >
+                                                <FontAwesomeIcon icon={faShieldHalved} />
+                                                <Text style="body1">Revoke.cash</Text>
                                             </Flex>
                                         </Link>
                                     </Grid>

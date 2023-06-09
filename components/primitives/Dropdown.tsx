@@ -11,12 +11,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 const DropdownMenuContent = styled(DropdownMenuPrimitive.DropdownMenuContent, {
   mx: '$4',
-  p: '$2',
   borderRadius: 8,
-  zIndex: 5,
-  background: '$dropdownBg',
-  $$borderColor: '$colors$gray7',
-  boxShadow: '0 0 0 1px $$borderColor',
+  zIndex: 1,
+  background:'$dropdownBg',
 })
 
 const AnimatedDropdownMenuContent = forwardRef<
@@ -26,7 +23,7 @@ const AnimatedDropdownMenuContent = forwardRef<
   <DropdownMenuContent asChild forceMount {...props}>
     <motion.div
       ref={forwardedRef}
-      initial={{ scale: 0.9, opacity: 0, y: -20 }}
+      initial={{ scale: 0.9, opacity: 1, y: -20 }}
       animate={{
         scale: 1,
         opacity: 1,
@@ -52,14 +49,7 @@ const DropdownMenuItem = styled(DropdownMenuPrimitive.DropdownMenuItem, {
   px: '$2',
   py: '$4',
   borderRadius: 8,
-  outline: 'none',
-  cursor: 'pointer',
-  '&:hover': {
-    backgroundColor: '$gray5',
-  },
-  '&:focus': {
-    backgroundColor: '$gray5',
-  },
+  outline: '',
 })
 
 type Props = {
