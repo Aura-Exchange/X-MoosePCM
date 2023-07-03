@@ -166,7 +166,7 @@ function MyApp({
             //CONFIGURABLE: Set your marketplace fee and recipient, (fee is in BPS)
             // Note that this impacts orders created on your marketplace (offers/listings)
             marketplaceFee: 100,
-            marketplaceFeeRecipient: "0xd2f6BF9e792DbBCA466D93bCC5a939e2D1c72B2B"
+            marketplaceFeeRecipient: "0x20FFF3132f522E8ABD0493Ba5151737C5059e48d"
           }}
           theme={reservoirKitTheme}
         >
